@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Index from '@/pages/index.vue'
+import Login from '@/pages/login.vue'
 
 // 统一声明所有路由
 const routes = [
@@ -10,6 +11,10 @@ const routes = [
     {
         path: '/index',
         component: Index
+    },
+    {
+        path: '/login',
+        component: Login
     }
 ]
 
@@ -21,13 +26,13 @@ const router = createRouter({
 })
 
 // 添加路由守卫
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = localStorage.getItem('token')
-//   if (to.name !== 'Login' && !isAuthenticated) {
-//     next({ name: 'Login' })
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('token')
+  if (to.path !== '/login' && !isAuthenticated) {
+    next('/login')
+  } else {
+    next()
+  }
+})
 
 export default router

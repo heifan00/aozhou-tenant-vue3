@@ -1,8 +1,9 @@
 import axios from 'axios'
+import qs from 'qs'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VITE_APP_BASE_API, // api的base_url
+  baseURL: '', // 不需要设置baseURL，因为vite代理已经处理了路径
   timeout: 5000 // 请求超时时间
 })
 
@@ -10,6 +11,17 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 在发送请求之前做些什么
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
+    // 打印请求地址
+    console.log(config.url)
+    // 处理不同的Content-Type
+    if (config.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+      config.data = qs.stringify(config.data)
+    }
+
     return config
   },
   error => {
