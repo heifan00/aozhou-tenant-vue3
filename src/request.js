@@ -35,7 +35,7 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     // 对响应数据做些什么
-    if (res.code !== 200) {
+    if (res.code !== 0) {
       // 处理错误
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
