@@ -11,15 +11,3 @@ export const login = (data) => {
     data
   })
 }
-
-// 表单提交示例
-export const submitForm = (data) => {
-  return request({
-    url: '/form/submit',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data
-  })
-}

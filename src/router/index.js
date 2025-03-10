@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Index from '@/pages/index.vue'
 import Login from '@/pages/login.vue'
+import Register from '@/pages/register.vue'
 
 // 统一声明所有路由
 const routes = [
@@ -15,6 +16,10 @@ const routes = [
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/register',
+        component: Register
     }
 ]
 

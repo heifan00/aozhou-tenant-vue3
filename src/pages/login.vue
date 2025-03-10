@@ -13,6 +13,9 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" class="login-button" @click="handleLogin">登录</el-button>
+          <div class="register-link">
+            没有账号？<el-link type="primary" @click="router.push('/register')">立即注册</el-link>
+          </div>
         </el-form-item>
       </el-form>
     </el-card>
@@ -78,5 +81,14 @@ const handleLogin = async () => {
 
 .login-button {
   width: 100%;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 </style>

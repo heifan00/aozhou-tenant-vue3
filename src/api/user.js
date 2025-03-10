@@ -3,8 +3,11 @@ import request from '@/request'
 // 用户注册
 export const register = (data) => {
   return request({
-    url: '/user/register',
+    url: '/api/user/register',
     method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     data
   })
 }
