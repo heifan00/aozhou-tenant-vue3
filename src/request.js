@@ -11,8 +11,10 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 在发送请求之前做些什么
-    const token = localStorage.getItem('token')
-    if (token) {
+    const token = localStorage.getItem('sa-token') // 修改此处为获取sa-token
+    console.log(token)
+
+      if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
     // 打印请求地址

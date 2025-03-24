@@ -16,7 +16,7 @@
           <el-dropdown>
             <el-space>
               <el-avatar :size="32" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
-              <span>管理员</span>
+              <span>{{ userInfo.username }}</span>
               <el-icon><CaretBottom /></el-icon>
             </el-space>
             <template #dropdown>
@@ -145,14 +145,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { House, Document, Setting, Bell, CaretBottom, Fold, Expand } from '@element-plus/icons-vue'
+import { getUserInfo } from '@/api/user.js'
 
 const isCollapse = ref(false)
+const userInfo = ref({
+  avatar: '',
+  name: ''
+})
 
 const toggleSidebar = () => {
   isCollapse.value = !isCollapse.value
 }
+
+onMounted(async () => {
+  try {
+    const response = await getUserInfo()
+    userInfo.value = response
+  } catch (error) {
+    console.error('获取用户信息失败', error)
+  }
+})
 </script>
 
 <style scoped>
@@ -183,12 +197,16 @@ const toggleSidebar = () => {
 
 .header-right {
   display: flex;
-  align-items: center;
+  align-items: center; /* 确保子元素垂直居中对齐 */
+  gap: 10px; /* 添加间距以确保元素在同一水平线 */
 }
 
 .notification {
-  font-size: 20px;
+  font-size: 25px;
   cursor: pointer;
+  display: flex; /* 添加 flex 布局 */
+  align-items: center; /* 垂直居中对齐 */
+  margin-right: 10px;
 }
 
 .sidebar {

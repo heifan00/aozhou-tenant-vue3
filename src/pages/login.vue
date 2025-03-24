@@ -49,9 +49,8 @@ const handleLogin = async () => {
   try {
     await loginFormRef.value.validate()
     loading.value = true
-    
     const res = await login(loginForm)
-    localStorage.setItem('token', res.data.token)
+    localStorage.setItem('sa-token', res.data['sa-token'])
     ElMessage.success('登录成功')
     router.push('/')
   } catch (error) {
