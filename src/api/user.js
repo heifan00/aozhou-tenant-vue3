@@ -22,3 +22,14 @@ export const getUserInfo = () => {
     }
   })
 }
+
+// 退出登录
+export const logout = () => {
+  return request({
+    url: '/api/user/logout',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}

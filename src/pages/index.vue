@@ -23,7 +23,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item>个人信息</el-dropdown-item>
                 <el-dropdown-item>修改密码</el-dropdown-item>
-                <el-dropdown-item divided>退出登录</el-dropdown-item>
+                <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -146,8 +146,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { House, Document, Setting, Bell, CaretBottom, Fold, Expand } from '@element-plus/icons-vue'
-import { getUserInfo } from '@/api/user.js'
+import { getUserInfo, logout } from '@/api/user.js'
+
+const router = useRouter()
 
 const isCollapse = ref(false)
 const userInfo = ref({
@@ -157,6 +161,22 @@ const userInfo = ref({
 
 const toggleSidebar = () => {
   isCollapse.value = !isCollapse.value
+}
+
+const handleLogout = async () => {
+  try {
+    await logout()
+    clearAuth()
+    ElMessage.success('退出成功')
+    await router.push('/login')
+  } catch (error) {
+    ElMessage.error('退出失败，请重试')
+  }
+}
+
+const clearAuth = () => {
+  localStorage.removeItem('token')
+  userInfo.value = {}
 }
 
 onMounted(async () => {
