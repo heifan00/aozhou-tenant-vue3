@@ -21,7 +21,7 @@
             </el-space>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>个人信息</el-dropdown-item>
+                <el-dropdown-item @click="handleProfileClick">个人信息</el-dropdown-item>
                 <el-dropdown-item>修改密码</el-dropdown-item>
                 <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
@@ -29,6 +29,8 @@
           </el-dropdown>
         </el-space>
       </div>
+      <!-- 引入用户信息弹窗，传递用户数据 -->
+      <UserInfoDialog ref="userInfoDialog" :userInfo="userInfo" />
     </el-header>
 
     <el-container>
@@ -150,14 +152,25 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { House, Document, Setting, Bell, CaretBottom, Fold, Expand } from '@element-plus/icons-vue'
 import { getUserInfo, logout } from '@/api/user.js'
+import UserInfoDialog from '@/pages/user/UserInfoDialog.vue';
 
 const router = useRouter()
 
 const isCollapse = ref(false)
 const userInfo = ref({
   avatar: '',
-  name: ''
+  username: '',
+  tenantId: '',
+  lastLogin: ''
 })
+
+// 引用用户信息弹窗组件
+const userInfoDialog = ref(null);
+
+// 点击个人信息按钮时打开弹窗
+const handleProfileClick = () => {
+  userInfoDialog.value.openDialog();
+};
 
 const toggleSidebar = () => {
   isCollapse.value = !isCollapse.value
@@ -182,7 +195,7 @@ const clearAuth = () => {
 onMounted(async () => {
   try {
     const response = await getUserInfo()
-    userInfo.value = response
+    userInfo.value = response.data['user']
   } catch (error) {
     console.error('获取用户信息失败', error)
   }
