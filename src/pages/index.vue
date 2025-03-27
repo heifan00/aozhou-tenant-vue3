@@ -42,23 +42,32 @@
           class="sidebar-menu"
           default-active="1"
         >
-          <el-menu-item index="1">
-            <el-icon><House /></el-icon>
-            <template #title>首页</template>
-          </el-menu-item>
-          <el-sub-menu index="2">
-            <template #title>
-              <el-icon><Document /></el-icon>
-              <span>系统管理</span>
-            </template>
-            <el-menu-item index="2-1">用户管理</el-menu-item>
-            <el-menu-item index="2-2">角色管理</el-menu-item>
-            <el-menu-item index="2-3">权限管理</el-menu-item>
-          </el-sub-menu>
-          <el-menu-item index="3">
-            <el-icon><Setting /></el-icon>
-            <template #title>系统设置</template>
-          </el-menu-item>
+          <!-- 动态生成菜单 -->
+          <template v-for="item in menuConfig" :key="item.index">
+            <el-sub-menu v-if="item.children" :index="item.index">
+              <template #title>
+                <el-icon><component :is="item.icon" /></el-icon>
+                <span>{{ item.title }}</span>
+              </template>
+              <el-menu-item
+                v-for="child in item.children"
+                :key="child.index"
+                :index="child.index"
+                @click="handleMenuClick(child)"
+              >
+                <el-icon><component :is="child.icon" /></el-icon>
+                <span>{{ child.title }}</span>
+              </el-menu-item>
+            </el-sub-menu>
+            <el-menu-item
+              v-else
+              :index="item.index"
+              @click="handleMenuClick(item)"
+            >
+              <el-icon><component :is="item.icon" /></el-icon>
+              <span>{{ item.title }}</span>
+            </el-menu-item>
+          </template>
         </el-menu>
       </el-aside>
 
@@ -66,80 +75,11 @@
       <el-main class="main-content">
         <el-breadcrumb class="breadcrumb">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>工作台</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ currentBreadcrumb }}</el-breadcrumb-item>
         </el-breadcrumb>
         
         <div class="content-wrapper">
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <el-card shadow="hover" class="dashboard-card">
-                <template #header>
-                  <div class="card-header">
-                    <span>总用户数</span>
-                    <el-tag type="success" size="small">月</el-tag>
-                  </div>
-                </template>
-                <div class="card-content">
-                  <h3>1,234</h3>
-                  <div class="trend">
-                    <span>周同比</span>
-                    <span class="up">12%</span>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="6">
-              <el-card shadow="hover" class="dashboard-card">
-                <template #header>
-                  <div class="card-header">
-                    <span>订单数</span>
-                    <el-tag type="warning" size="small">月</el-tag>
-                  </div>
-                </template>
-                <div class="card-content">
-                  <h3>5,678</h3>
-                  <div class="trend">
-                    <span>周同比</span>
-                    <span class="down">5%</span>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="6">
-              <el-card shadow="hover" class="dashboard-card">
-                <template #header>
-                  <div class="card-header">
-                    <span>销售额</span>
-                    <el-tag type="danger" size="small">月</el-tag>
-                  </div>
-                </template>
-                <div class="card-content">
-                  <h3>¥89,745</h3>
-                  <div class="trend">
-                    <span>周同比</span>
-                    <span class="up">18%</span>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="6">
-              <el-card shadow="hover" class="dashboard-card">
-                <template #header>
-                  <div class="card-header">
-                    <span>活跃度</span>
-                    <el-tag type="info" size="small">月</el-tag>
-                  </div>
-                </template>
-                <div class="card-content">
-                  <h3>92%</h3>
-                  <div class="trend">
-                    <span>周同比</span>
-                    <span class="up">8%</span>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
+          <component :is="currentComponent" />
         </div>
       </el-main>
     </el-container>
@@ -150,9 +90,14 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { House, Document, Setting, Bell, CaretBottom, Fold, Expand } from '@element-plus/icons-vue'
+import { House, Document, User, Setting, Bell } from '@element-plus/icons-vue'
 import { getUserInfo, logout } from '@/api/user.js'
 import UserInfoDialog from '@/pages/user/UserInfoDialog.vue';
+// 组件动态加载
+import Home from '@/pages/Home.vue';
+import SystemSettings from '@/pages/sys/SystemSettings.vue';
+import UserManagement from '@/pages/sys/UserManagement.vue';
+import RoleManagement from '@/pages/sys/RoleManagement.vue';
 
 const router = useRouter()
 
@@ -200,6 +145,39 @@ onMounted(async () => {
     console.error('获取用户信息失败', error)
   }
 })
+
+// 修改: 将图标名称改为对应的图标组件对象，并移除 Permission 图标
+const menuConfig = ref([
+  { index: '1', title: '首页', icon: House, component: Home },
+  { index: '2', title: '学校管理', icon: Document, component: SystemSettings },
+  { index: '3', title: '学校宿舍管理', icon: Document, component: SystemSettings },
+  { index: '4', title: '学生信息管理', icon: Document, component: SystemSettings },
+  {
+    index: '9',
+    title: '系统设置',
+    icon: Setting,
+    children: [
+      { index: '2-1', title: '用户管理', icon: User, component: UserManagement },
+      { index: '2-2', title: '角色管理', icon: User, component: RoleManagement },
+    ]
+  },
+])
+
+// 新增：当前显示的组件
+const currentComponent = ref(Home);
+// 新增：当前面包屑标题
+const currentBreadcrumb = ref('首页');
+
+// 更新：菜单项点击事件，更新当前组件和面包屑标题
+const handleMenuClick = (item) => {
+  currentComponent.value = item.component;
+  // 更新面包屑标题逻辑
+  if (item.children) {
+    currentBreadcrumb.value = item.title;
+  } else {
+    currentBreadcrumb.value = item.title;
+  }
+}
 </script>
 
 <style scoped>
