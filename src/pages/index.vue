@@ -98,6 +98,7 @@ import Home from '@/pages/Home.vue';
 import SystemSettings from '@/pages/sys/SystemSettings.vue';
 import UserManagement from '@/pages/sys/UserManagement.vue';
 import RoleManagement from '@/pages/sys/RoleManagement.vue';
+import SchoolManage from "@/pages/school/SchoolManage.vue";
 
 const router = useRouter()
 
@@ -149,7 +150,7 @@ onMounted(async () => {
 // 修改: 将图标名称改为对应的图标组件对象，并移除 Permission 图标
 const menuConfig = ref([
   { index: '1', title: '首页', icon: House, component: Home },
-  { index: '2', title: '学校管理', icon: Document, component: SystemSettings },
+  { index: '2', title: '学校管理', icon: Document, component: SchoolManage },
   { index: '3', title: '学校宿舍管理', icon: Document, component: SystemSettings },
   { index: '4', title: '学生信息管理', icon: Document, component: SystemSettings },
   {
